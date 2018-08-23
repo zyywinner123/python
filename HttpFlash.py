@@ -1,4 +1,6 @@
 from flask import Flask , make_response, request,json
+import sys
+
 
 app = Flask(__name__)
 
@@ -7,6 +9,9 @@ class User:
     def __init__(self, name, age):
         self.name = name
         self.age = age
+
+def dealImg():
+    output_dict=test.DotestHerpes.run_inference_for_single_image(image, detection_graph)
 
 @app.route('/')
 def hello_world():
@@ -23,7 +28,9 @@ def file_upload():
 
     f = request.files['skFile']
     f.save("e://flask//"+f.filename);
-    #
+
+    image = Image.open(f.filepath)
+
     return 'file uploaded successfully'
 
     user = User('bbb', 456)
