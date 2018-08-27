@@ -1,5 +1,6 @@
 from flask import Flask , make_response, request,json,send_file
 import os
+import uuid
 import time
 
 import cv2
@@ -58,7 +59,7 @@ class TODD():
             # plt.pause(1)
             # plt.show()
 
-            markPicUrl = 'e://flask//result.jpg'
+            markPicUrl = image.replace("_in","_out")
             cv2.imwrite(markPicUrl,frame)
             print(type(markPicUrl))
         return np.squeeze(scores)[0],markPicUrl
@@ -127,23 +128,25 @@ def file_upload():
 
     f = request.files['skFile']
     # f.save("e://flask//"+f.filename);
-    f.save("e://flask//"+"1.jpg");
-    tt=f.filename
+    uuidStr = uuid.uuid1()
+    savedFilePath = "e://flask//" + str(uuidStr) + "_in_" + f.filename
+    f.save(savedFilePath);
+    fileName = f.filename
     # image = Image.open(f.filepath)
 
     # image = cv2.imread("e://flask//"+f.filename)
     # image = cv2.imread("e://flask//"+"1.jpg")
     detecotr = TODD()
-    result = detecotr.inputt("E:\\flask\\1.jpg")
+    result = detecotr.inputt(savedFilePath)
     # return '计算的值 ' + str(result)
 
-    response = make_response(json.dumps(tt, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))#返回数据
+    # response = make_response(json.dumps(tt, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))#返回数据
     # response.headers['Content-Type'] = 'application/json'
     # response.headers['response'] = str(result)
     # response(f, mimetype='application/octet-stream')
     response = make_response(send_file(result[1]))
     response.headers['result'] = str(result[0])
-    response.headers["Content-Disposition"] = "attachment; filename=myfiles.xls;"+tt
+    response.headers["Content-Disposition"] = "attachment; filename="+fileName+";"
     return response
     # return response
 
